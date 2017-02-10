@@ -1,11 +1,6 @@
+#include <SoftwareServo.h>
 
-/*
-  Blink
-  Turns on an LED on for one second, then off for one second, repeatedly.
- 
-  This example code is in the public domain.
- */
- 
+SoftwareServo servo1;
 
 const int led = 1;
 const int s = 0;
@@ -23,7 +18,8 @@ void setup() {
   pinMode(led, OUTPUT);     
   pinMode(buzzer, OUTPUT);   
   pinMode(cds, INPUT);
-  pinMode(s, OUTPUT);
+  servo1.attach(s);
+  servo1.setMaximumPulse(2200);
   light = prev_light = 0;  
 }
 
@@ -75,16 +71,21 @@ int readSensor() {
 void loop() {
   prev_light = light;
   light = readSensor();
-  analogWrite(led, 150);
   if ((light - prev_light) > LIGHT_DELTA_THRESHOLD) {
     beep(buzzer, 400, 100);
     analogWrite(led, 250);
-    analogWrite(s, 150);
+    servo1.write(150);
   }
-  if ((prev_light - light) > LIGHT_DELTA_THRESHOLD) {
+  else if ((prev_light - light) > LIGHT_DELTA_THRESHOLD) {
     beep(buzzer, 100, 50);
     analogWrite(led, 0);
-    analogWrite(s, 10);
+    servo1.write(10);
+  } else {
+    servo1.write(80);
+    analogWrite(led, 150);
   }
-  delay(1000);
+  for (int i=0; i<20; i++) {  // Delay in steps so that we can refresh the softwareservos every 50ms
+    SoftwareServo::refresh();
+    delay(50);
+  }
 }

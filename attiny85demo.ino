@@ -1,3 +1,4 @@
+
 /*
   Blink
   Turns on an LED on for one second, then off for one second, repeatedly.
@@ -5,12 +6,9 @@
   This example code is in the public domain.
  */
  
-// Pin 13 has an LED connected on most Arduino boards.
-// Pin 11 has the LED on Teensy 2.0
-// Pin 6  has the LED on Teensy++ 2.0
-// Pin 13 has the LED on Teensy 3.0
-// give it a name:
+
 const int led = 1;
+const int s = 0;
 const int buzzer = 4;
 const int cds = 3;
 const int SENSOR_SAMPLES = 5;
@@ -25,6 +23,7 @@ void setup() {
   pinMode(led, OUTPUT);     
   pinMode(buzzer, OUTPUT);   
   pinMode(cds, INPUT);
+  pinMode(s, OUTPUT);
   light = prev_light = 0;  
 }
 
@@ -39,7 +38,7 @@ void beep (unsigned char pin, int frequencyInHertz, long timeInMilliseconds) {
     delayMicroseconds(delayAmount);
     digitalWrite(pin,LOW);
     delayMicroseconds(delayAmount);
-  }  
+  } 
 }
 
 int smooth(int array[], int len) {
@@ -78,12 +77,14 @@ void loop() {
   light = readSensor();
   analogWrite(led, 150);
   if ((light - prev_light) > LIGHT_DELTA_THRESHOLD) {
-    beep(buzzer, 125, 50);
+    beep(buzzer, 400, 100);
     analogWrite(led, 250);
+    analogWrite(s, 150);
   }
   if ((prev_light - light) > LIGHT_DELTA_THRESHOLD) {
-    beep(buzzer, 125, 50);
-    analogWrite(led, 50);
+    beep(buzzer, 100, 50);
+    analogWrite(led, 0);
+    analogWrite(s, 10);
   }
   delay(1000);
 }
